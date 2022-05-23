@@ -2,7 +2,7 @@ use cloudy::cloudylang;
 
 #[test]
 fn number() {
-    let input = "0";
+    let input = "1";
     let expected = vec![cloudylang::utils::Token::new(
         cloudylang::utils::TokenKind::Number(1.0),
         cloudylang::utils::Position::new("<stdin>", input.to_string()),
