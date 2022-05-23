@@ -1,4 +1,4 @@
-use super::Position;
+use super::{Position, Token};
 
 pub struct Errors;
 impl Errors {
@@ -15,6 +15,22 @@ impl Errors {
             "UnexpectedCharError",
             pos,
             format!("Unexpected character '{}'", c),
+        )
+    }
+
+    pub fn unexpected_eof_error(pos: Position) -> String {
+        Errors::error_shell(
+            "UnexpectedEofError",
+            pos,
+            "Unexpected end of file".to_string(),
+        )
+    }
+
+    pub fn unexpected_token_error(tok: Token, expected: &str) -> String {
+        Errors::error_shell(
+            "UnexpectedTokenError",
+            tok.pos.copy(),
+            format!("Unexpected token '{}' (expected {})", tok.name(), expected),
         )
     }
 

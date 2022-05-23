@@ -8,7 +8,7 @@ fn number() {
         cloudylang::utils::Position::new("<stdin>", input.to_string()),
     )];
     let actual = cloudylang::Lexer::new(input, "<stdin>").lex().unwrap();
-    assert_eq!(expected, actual);
+    assert_eq!(expected, actual[..actual.len() - 1]);
 }
 
 #[test]
@@ -19,7 +19,7 @@ fn float() {
         cloudylang::utils::Position::new("<stdin>", input.to_string()),
     )];
     let actual = cloudylang::Lexer::new(input, "<stdin>").lex().unwrap();
-    assert_eq!(expected, actual);
+    assert_eq!(expected, actual[..actual.len() - 1]);
 }
 
 #[test]
@@ -30,7 +30,7 @@ fn plus_tok() {
         cloudylang::utils::Position::new("<stdin>", input.to_string()),
     )];
     let actual = cloudylang::Lexer::new(input, "<stdin>").lex().unwrap();
-    assert_eq!(expected, actual);
+    assert_eq!(expected, actual[..actual.len() - 1]);
 }
 
 #[test]
@@ -41,7 +41,7 @@ fn minus_tok() {
         cloudylang::utils::Position::new("<stdin>", input.to_string()),
     )];
     let actual = cloudylang::Lexer::new(input, "<stdin>").lex().unwrap();
-    assert_eq!(expected, actual);
+    assert_eq!(expected, actual[..actual.len() - 1]);
 }
 
 #[test]
@@ -52,7 +52,7 @@ fn mult_tok() {
         cloudylang::utils::Position::new("<stdin>", input.to_string()),
     )];
     let actual = cloudylang::Lexer::new(input, "<stdin>").lex().unwrap();
-    assert_eq!(expected, actual);
+    assert_eq!(expected, actual[..actual.len() - 1]);
 }
 
 #[test]
@@ -63,7 +63,7 @@ fn div_tok() {
         cloudylang::utils::Position::new("<stdin>", input.to_string()),
     )];
     let actual = cloudylang::Lexer::new(input, "<stdin>").lex().unwrap();
-    assert_eq!(expected, actual);
+    assert_eq!(expected, actual[..actual.len() - 1]);
 }
 
 #[test]
@@ -74,7 +74,7 @@ fn lparen_tok() {
         cloudylang::utils::Position::new("<stdin>", input.to_string()),
     )];
     let actual = cloudylang::Lexer::new(input, "<stdin>").lex().unwrap();
-    assert_eq!(expected, actual);
+    assert_eq!(expected, actual[..actual.len() - 1]);
 }
 
 #[test]
@@ -85,7 +85,7 @@ fn rparen_tok() {
         cloudylang::utils::Position::new("<stdin>", input.to_string()),
     )];
     let actual = cloudylang::Lexer::new(input, "<stdin>").lex().unwrap();
-    assert_eq!(expected, actual);
+    assert_eq!(expected, actual[..actual.len() - 1]);
 }
 
 #[test]

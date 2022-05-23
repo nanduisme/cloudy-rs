@@ -45,6 +45,7 @@ impl Lexer {
             }
         }
 
+        tokens.push(Token::new(TokenKind::Eof, self.pos.copy()));
         Ok(tokens)
     }
 

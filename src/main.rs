@@ -17,7 +17,7 @@ fn main() {
         }
 
         // Do all the parsing and interpreting
-        match cloudylang::Lexer::new(input, "<stdin>").lex() {
+        match cloudylang::Parser::new().parse(input, "<stdin>") {
             Ok(program) => {
                 println!("{:?}", program);
             }
