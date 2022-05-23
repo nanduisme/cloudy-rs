@@ -60,7 +60,7 @@ impl Parser {
     }
 
     fn factor(&mut self) -> Result<Node, String> {
-        let atom = match self.atom() {
+        let unary = match self.unary() {
             Ok(atom) => atom,
             Err(e) => return Err(e),
         };
@@ -74,13 +74,30 @@ impl Parser {
             };
 
             return Ok(Node::BinOpNode {
-                left: Box::new(atom),
+                left: Box::new(unary),
                 op: tok,
                 right: Box::new(right),
             });
         }
 
-        Ok(atom)
+        Ok(unary)
+    }
+
+    fn unary(&mut self) -> Result<Node, String> {
+        let tok = self.current_tok().unwrap().copy();
+        if tok.of_kinds(&[TokenKind::Plus, TokenKind::Minus]) {
+            self.advance();
+            let unary = match self.unary() {
+                Ok(unary) => unary,
+                Err(e) => return Err(e),
+            };
+            return Ok(Node::UnaryOpNode {
+                op: tok,
+                right: Box::new(unary),
+            });
+        }
+
+        self.atom()
     }
 
     fn atom(&mut self) -> Result<Node, String> {

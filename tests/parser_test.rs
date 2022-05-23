@@ -30,6 +30,94 @@ fn float_parse() {
 }
 
 #[test]
+fn neg_unary_parse() {
+    let input = "-1";
+    let expected = Node::UnaryOpNode {
+        op: Token::new(
+            TokenKind::Minus,
+            Position::new("<stdin>", input.to_string()),
+        ),
+        right: Box::new(Node::NumberNode {
+            tok: Token::new(
+                TokenKind::Number(1.0),
+                Position::new("<stdin>", input.to_string()),
+            ),
+        }),
+    };
+    let actual = Parser::new().parse(input, "<stdin>").unwrap();
+    assert_eq!(expected, actual);
+}
+
+#[test]
+fn pos_unary_parse() {
+    let input = "+1";
+    let expected = Node::UnaryOpNode {
+        op: Token::new(
+            TokenKind::Plus,
+            Position::new("<stdin>", input.to_string()),
+        ),
+        right: Box::new(Node::NumberNode {
+            tok: Token::new(
+                TokenKind::Number(1.0),
+                Position::new("<stdin>", input.to_string()),
+            ),
+        }),
+    };
+    let actual = Parser::new().parse(input, "<stdin>").unwrap();
+    assert_eq!(expected, actual);
+}
+
+#[test]
+fn double_neg_unary_parse() {
+    let input = "--1";
+    let expected = Node::UnaryOpNode {
+        op: Token::new(
+            TokenKind::Minus,
+            Position::new("<stdin>", input.to_string()),
+        ),
+        right: Box::new(Node::UnaryOpNode {
+            op: Token::new(
+                TokenKind::Minus,
+                Position::new("<stdin>", input.to_string()),
+            ),
+            right: Box::new(Node::NumberNode {
+                tok: Token::new(
+                    TokenKind::Number(1.0),
+                    Position::new("<stdin>", input.to_string()),
+                ),
+            }),
+        }),
+    };
+    let actual = Parser::new().parse(input, "<stdin>").unwrap();
+    assert_eq!(expected, actual);
+}
+
+#[test]
+fn double_pos_unary_parse() {
+    let input = "++1";
+    let expected = Node::UnaryOpNode {
+        op: Token::new(
+            TokenKind::Plus,
+            Position::new("<stdin>", input.to_string()),
+        ),
+        right: Box::new(Node::UnaryOpNode {
+            op: Token::new(
+                TokenKind::Plus,
+                Position::new("<stdin>", input.to_string()),
+            ),
+            right: Box::new(Node::NumberNode {
+                tok: Token::new(
+                    TokenKind::Number(1.0),
+                    Position::new("<stdin>", input.to_string()),
+                ),
+            }),
+        }),
+    };
+    let actual = Parser::new().parse(input, "<stdin>").unwrap();
+    assert_eq!(expected, actual);
+}
+
+#[test]
 fn simple_2_term_parse() {
     let input = "1 + 2";
     let expected = Node::BinOpNode {
