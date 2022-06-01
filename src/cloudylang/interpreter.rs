@@ -122,7 +122,7 @@ impl Interpreter {
     pub fn visit_unary_op_node(node: Node) -> Result<Box<dyn Dtype>, String> {
         match node {
             Node::UnaryOp { op, right } => {
-                let right = Interpreter::visit(*right)?; 
+                let right = Interpreter::visit(*right)?;
 
                 match op.kind {
                     TokenKind::Minus => right.neg(),

@@ -14,7 +14,7 @@ pub enum TokenKind {
     Div,
     Mod,
     Pow,
-    
+
     // Single char tokens
     LParen,
     RParen,
@@ -60,7 +60,6 @@ impl Token {
     pub fn of_kinds(&self, kinds: &[TokenKind]) -> bool {
         kinds.iter().any(|k| self.is_kind(k))
     }
-
 }
 
 impl PartialEq for Token {

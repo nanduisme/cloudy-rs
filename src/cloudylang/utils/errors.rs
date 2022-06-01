@@ -43,11 +43,7 @@ impl Errors {
     }
 
     pub fn div_by_zero_error(pos: Position) -> String {
-        Errors::error_shell(
-            "DivByZeroError",
-            pos,
-            "Division by zero".to_string(),
-        )
+        Errors::error_shell("DivByZeroError", pos, "Division by zero".to_string())
     }
 
     fn error_shell(err_name: &'static str, pos: Position, message: String) -> String {

@@ -144,7 +144,7 @@ impl Parser {
             TokenKind::LParen => {
                 self.advance();
                 let expr = self.expr()?;
-                
+
                 if self.current_tok().unwrap().is_kind(&TokenKind::RParen) {
                     node = expr;
                 } else {

@@ -1,4 +1,4 @@
-mod traits;
 mod number;
-pub use traits::Dtype;
+mod traits;
 pub use number::Number;
+pub use traits::Dtype;
