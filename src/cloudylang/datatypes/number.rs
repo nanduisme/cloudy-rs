@@ -1,5 +1,5 @@
-use crate::cloudylang::utils::{Errors, Position, Token, TokenKind};
 use super::Dtype;
+use crate::cloudylang::utils::{Errors, Position, Token, TokenKind};
 
 #[derive(Clone, Debug)]
 pub struct Number {
@@ -43,13 +43,17 @@ impl Dtype for Number {
         Box::new(Number::new_from_value(self.value, self.position.copy()))
     }
 
-    fn debug(&self) -> String {
+    fn dbg(&self) -> String {
         // Display the value without decimals if it doesnt make a difference to the actual value
         if self.value.fract() == 0.0 {
             format!("{}", self.value.trunc())
         } else {
             format!("{}", self.value)
         }
+    }
+
+    fn disp(&self) -> String {
+        self.dbg()
     }
 
     fn add(&self, other: Box<dyn Dtype>) -> Result<Box<dyn Dtype>, String> {
@@ -118,6 +122,42 @@ impl Dtype for Number {
                 self.get_pos(),
             )))
         }
+    }
+
+    fn modulo(&self, other: Box<dyn Dtype>) -> Result<Box<dyn Dtype>, String> {
+        if other.get_name() != "number" {
+            return Err(Errors::type_error(
+                other.get_pos(),
+                "number",
+                other.get_name(),
+            ));
+        }
+
+        let other_val = other.get_value();
+        if other_val == 0.0 {
+            Err(Errors::div_by_zero_error(other.get_pos()))
+        } else {
+            Ok(Box::new(Number::new_from_value(
+                self.value % other_val,
+                self.get_pos(),
+            )))
+        }
+    }
+
+    fn pow(&self, other: Box<dyn Dtype>) -> Result<Box<dyn Dtype>, String> {
+        if other.get_name() != "number" {
+            return Err(Errors::type_error(
+                other.get_pos(),
+                "number",
+                other.get_name(),
+            ));
+        }
+
+        let other_val = other.get_value();
+        Ok(Box::new(Number::new_from_value(
+            self.value.powf(other_val),
+            self.get_pos(),
+        )))
     }
 
     fn neg(&self) -> Result<Box<dyn Dtype>, String> {

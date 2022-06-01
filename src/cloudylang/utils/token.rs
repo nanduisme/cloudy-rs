@@ -7,11 +7,15 @@ pub enum TokenKind {
 
     Eof,
 
-    // Single char tokens
+    // Operators
     Plus,
     Minus,
     Mult,
     Div,
+    Mod,
+    Pow,
+    
+    // Single char tokens
     LParen,
     RParen,
 }
@@ -41,6 +45,8 @@ impl Token {
             TokenKind::Minus => "-",
             TokenKind::Mult => "*",
             TokenKind::Div => "/",
+            TokenKind::Mod => "%",
+            TokenKind::Pow => "^",
             TokenKind::LParen => "(",
             TokenKind::RParen => ")",
             TokenKind::Eof => "eof",

@@ -21,12 +21,7 @@ pub struct Interpreter {}
 
 impl Interpreter {
     pub fn interpret(&self, input: &str, filename: &'static str) -> Result<Box<dyn Dtype>, String> {
-        let ast = Parser::new().parse(input, filename);
-        let ast = match ast {
-            Ok(ast) => ast,
-            Err(e) => return Err(e),
-        };
-
+        let ast = Parser::new().parse(input, filename)?;
         Interpreter::visit(ast)
     }
 
@@ -84,6 +79,8 @@ impl Interpreter {
                                     TokenKind::Minus => left.sub(right)?,
                                     TokenKind::Mult => left.mul(right)?,
                                     TokenKind::Div => left.div(right)?,
+                                    TokenKind::Mod => left.modulo(right)?,
+                                    TokenKind::Pow => left.pow(right)?,
                                     _ => {
                                         return Err(Errors::unexpected_token_error(
                                             op.copy(),
@@ -125,10 +122,7 @@ impl Interpreter {
     pub fn visit_unary_op_node(node: Node) -> Result<Box<dyn Dtype>, String> {
         match node {
             Node::UnaryOp { op, right } => {
-                let right = match Interpreter::visit(*right) {
-                    Ok(right) => right,
-                    Err(e) => return Err(e),
-                };
+                let right = Interpreter::visit(*right)?; 
 
                 match op.kind {
                     TokenKind::Minus => right.neg(),

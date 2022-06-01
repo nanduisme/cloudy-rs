@@ -34,6 +34,8 @@ impl Lexer {
                 '-' => self.push_sing_char_tok(&mut tokens, TokenKind::Minus, self.pos.copy()),
                 '*' => self.push_sing_char_tok(&mut tokens, TokenKind::Mult, self.pos.copy()),
                 '/' => self.push_sing_char_tok(&mut tokens, TokenKind::Div, self.pos.copy()),
+                '%' => self.push_sing_char_tok(&mut tokens, TokenKind::Mod, self.pos.copy()),
+                '^' => self.push_sing_char_tok(&mut tokens, TokenKind::Pow, self.pos.copy()),
                 '(' => self.push_sing_char_tok(&mut tokens, TokenKind::LParen, self.pos.copy()),
                 ')' => self.push_sing_char_tok(&mut tokens, TokenKind::RParen, self.pos.copy()),
                 _ => {

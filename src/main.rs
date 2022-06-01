@@ -21,7 +21,7 @@ fn main() {
         // Do all the parsing and interpreting
         match cloudylang::Interpreter::new().interpret(input, "<stdin>") {
             Ok(program) => {
-                println!("{}", program.debug());
+                println!("{}", program.dbg());
             }
             Err(e) => {
                 println!("{}", e);

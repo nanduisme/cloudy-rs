@@ -25,11 +25,7 @@ impl Parser {
     }
 
     pub fn parse(&mut self, input: &str, fname: &'static str) -> Result<Node, String> {
-        self.tokens = match Lexer::new(input, fname).lex() {
-            Ok(tokens) => tokens,
-            Err(e) => return Err(e),
-        };
-
+        self.tokens = Lexer::new(input, fname).lex()?;
         self.expr()
     }
 
@@ -38,10 +34,7 @@ impl Parser {
     }
 
     fn rpn(&mut self) -> Result<Node, String> {
-        let left = match self.unary() {
-            Ok(atom) => atom,
-            Err(e) => return Err(e),
-        };
+        let left = self.unary()?;
 
         let mut stack: Vec<Token> = Vec::new();
         let mut output: Vec<Node> = vec![left];
@@ -53,6 +46,8 @@ impl Parser {
                 TokenKind::Minus,
                 TokenKind::Mult,
                 TokenKind::Div,
+                TokenKind::Mod,
+                TokenKind::Pow,
             ])
         {
             let op = self.current_tok().unwrap().clone();
@@ -78,6 +73,7 @@ impl Parser {
                         if op.of_kinds(&[
                             TokenKind::Mult,
                             TokenKind::Div,
+                            TokenKind::Mod,
                             TokenKind::Plus,
                             TokenKind::Minus,
                         ]) {
@@ -88,6 +84,8 @@ impl Parser {
                             output.push(Node::Op {
                                 op: stack.pop().unwrap(),
                             });
+                        } else {
+                            output.push(Node::Op { op })
                         }
                     }
                     _ => {
@@ -121,10 +119,7 @@ impl Parser {
         let tok = self.current_tok().unwrap().copy();
         if tok.of_kinds(&[TokenKind::Plus, TokenKind::Minus]) {
             self.advance();
-            let unary = match self.unary() {
-                Ok(unary) => unary,
-                Err(e) => return Err(e),
-            };
+            let unary = self.unary()?;
             return Ok(Node::UnaryOp {
                 op: tok,
                 right: Box::new(unary),
@@ -148,12 +143,8 @@ impl Parser {
             TokenKind::Number(_) => node = Node::Number { tok: tok.copy() },
             TokenKind::LParen => {
                 self.advance();
-
-                let expr = match self.expr() {
-                    Ok(expr) => expr,
-                    Err(e) => return Err(e),
-                };
-
+                let expr = self.expr()?;
+                
                 if self.current_tok().unwrap().is_kind(&TokenKind::RParen) {
                     node = expr;
                 } else {
