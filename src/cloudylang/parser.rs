@@ -34,53 +34,87 @@ impl Parser {
     }
 
     fn expr(&mut self) -> Result<Node, String> {
-        self.term()
+        self.rpn()
     }
 
-    fn term(&mut self) -> Result<Node, String> {
-        let factor = match self.factor() {
-            Ok(f) => f,
-            Err(e) => return Err(e),
-        };
-
-        let tok = self.current_tok().unwrap().copy();
-        if tok.of_kinds(&[TokenKind::Plus, TokenKind::Minus]) {
-            self.advance();
-            let term = match self.term() {
-                Ok(t) => t,
-                Err(e) => return Err(e),
-            };
-            return Ok(Node::BinOpNode {
-                left: Box::new(factor),
-                op: tok,
-                right: Box::new(term),
-            });
-        }
-        Ok(factor)
-    }
-
-    fn factor(&mut self) -> Result<Node, String> {
-        let unary = match self.unary() {
+    fn rpn(&mut self) -> Result<Node, String> {
+        let left = match self.unary() {
             Ok(atom) => atom,
             Err(e) => return Err(e),
         };
 
-        let tok = self.current_tok().unwrap().copy();
-        if tok.of_kinds(&[TokenKind::Mult, TokenKind::Div]) {
+        let mut stack: Vec<Token> = Vec::new();
+        let mut output: Vec<Node> = vec![left];
+
+        while self.current_tok().is_some()
+            && !self.current_tok().unwrap().is_kind(&TokenKind::Eof)
+            && self.current_tok().unwrap().of_kinds(&[
+                TokenKind::Plus,
+                TokenKind::Minus,
+                TokenKind::Mult,
+                TokenKind::Div,
+            ])
+        {
+            let op = self.current_tok().unwrap().clone();
             self.advance();
-            let right = match self.factor() {
+
+            if !stack.is_empty() {
+                match stack.get(0).unwrap().kind {
+                    TokenKind::Plus | TokenKind::Minus => {
+                        if op.of_kinds(&[TokenKind::Plus, TokenKind::Minus]) {
+                            stack.reverse();
+                            stack.push(op);
+                            stack.reverse();
+
+                            output.push(Node::Op {
+                                op: stack.pop().unwrap(),
+                            });
+                        } else {
+                            output.push(Node::Op { op })
+                        }
+                    }
+
+                    TokenKind::Mult | TokenKind::Div => {
+                        if op.of_kinds(&[
+                            TokenKind::Mult,
+                            TokenKind::Div,
+                            TokenKind::Plus,
+                            TokenKind::Minus,
+                        ]) {
+                            stack.reverse();
+                            stack.push(op);
+                            stack.reverse();
+
+                            output.push(Node::Op {
+                                op: stack.pop().unwrap(),
+                            });
+                        }
+                    }
+                    _ => {
+                        stack.reverse();
+                        stack.push(op);
+                        stack.reverse();
+                    }
+                };
+            } else {
+                stack.push(op);
+            }
+
+            let right = match self.unary() {
                 Ok(right) => right,
                 Err(e) => return Err(e),
             };
 
-            return Ok(Node::BinOpNode {
-                left: Box::new(unary),
-                op: tok,
-                right: Box::new(right),
+            output.push(right);
+        }
+
+        while !stack.is_empty() {
+            output.push(Node::Op {
+                op: stack.pop().unwrap(),
             });
         }
 
-        Ok(unary)
+        Ok(Node::Rpn { rpn: output })
     }
 
     fn unary(&mut self) -> Result<Node, String> {
@@ -91,7 +125,7 @@ impl Parser {
                 Ok(unary) => unary,
                 Err(e) => return Err(e),
             };
-            return Ok(Node::UnaryOpNode {
+            return Ok(Node::UnaryOp {
                 op: tok,
                 right: Box::new(unary),
             });
@@ -111,7 +145,7 @@ impl Parser {
         let node: Node;
 
         match tok.kind {
-            TokenKind::Number(_) => node = Node::NumberNode { tok: tok.copy() },
+            TokenKind::Number(_) => node = Node::Number { tok: tok.copy() },
             TokenKind::LParen => {
                 self.advance();
 

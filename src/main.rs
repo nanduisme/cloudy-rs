@@ -14,12 +14,14 @@ fn main() {
 
         if input == "exit" {
             break;
+        } else if input.is_empty() {
+            continue;
         }
 
         // Do all the parsing and interpreting
-        match cloudylang::Parser::new().parse(input, "<stdin>") {
+        match cloudylang::Interpreter::new().interpret(input, "<stdin>") {
             Ok(program) => {
-                println!("{:?}", program);
+                println!("{}", program.debug());
             }
             Err(e) => {
                 println!("{}", e);

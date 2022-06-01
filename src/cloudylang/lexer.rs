@@ -11,7 +11,7 @@ impl Lexer {
         Lexer {
             pos: Position::new(fname, <&str>::clone(&input).to_string()),
             input: input.to_string(),
-            numbers: "0123456789.".chars().collect::<Vec<char>>(),
+            numbers: "0123456789".chars().collect::<Vec<char>>(),
         }
     }
 
@@ -58,7 +58,9 @@ impl Lexer {
         let pos = self.pos.copy();
         let mut found_decimal = false;
 
-        while self.current_char().is_some() && self.numbers.contains(&self.current_char().unwrap())
+        while self.current_char().is_some()
+            && (self.numbers.contains(&self.current_char().unwrap())
+                || self.current_char().unwrap() == '.')
         {
             if self.current_char().unwrap() == '.' && found_decimal {
                 return Err(Errors::unexpected_char_error('.', self.pos.copy()));
@@ -70,7 +72,10 @@ impl Lexer {
             self.advance();
         }
 
-        Ok(Token::new(TokenKind::Number(num.parse::<f64>().unwrap()), pos))
+        Ok(Token::new(
+            TokenKind::Number(num.parse::<f64>().unwrap()),
+            pos,
+        ))
     }
 
     fn push_sing_char_tok(&mut self, toks: &mut Vec<Token>, kind: TokenKind, pos: Position) {

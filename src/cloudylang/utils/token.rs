@@ -1,6 +1,6 @@
 use super::Position;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Copy)]
 pub enum TokenKind {
     // Value tokens
     Number(f64),
